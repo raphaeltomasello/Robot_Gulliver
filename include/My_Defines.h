@@ -3,8 +3,8 @@
 #define FW_REVISION         "R1"		// Same as FW_VERSION, but string type
 #define FW_VERSION          1
 
-#define DEVICE_NAME_BL         String(DEVICE_NAME) + "_" + String(DEVICE_ID)
-#define PS3_KEY             "5c:6d:20:07:55:21"
+#define DEVICE_NAME_BL      String(DEVICE_NAME) + "_" + String(DEVICE_ID)
+#define MAC_CONTROLLER      "4c:b9:9b:60:58:9d"
 
 //********* BLYNK **************
 #define BLYNK_TEMPLATE_ID "TMPL2yI3kdDCD"
@@ -17,6 +17,12 @@
 #define PIN_LED 2
 
 #define BUTTON_PIN 23
+
+#define MOTOR_PIN1 5
+#define MOTOR_PIN2 18
+#define MOTOR_PIN3 19
+#define MOTOR_PIN4 21
+
 
 #define PROCESSOR_COMMUNICATION 1
 #define PROCESSOR_MAIN 0
