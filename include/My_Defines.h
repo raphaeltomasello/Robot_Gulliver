@@ -3,13 +3,9 @@
 #define FW_REVISION         "R1"		// Same as FW_VERSION, but string type
 #define FW_VERSION          1
 
-#define DEVICE_NAME_BL      String(DEVICE_NAME) + "_" + String(DEVICE_ID)
-#define MAC_CONTROLLER      "4c:b9:9b:60:58:9d"
+#define DEVICE_NAME_BL      String(DEVICE_NAME) + "_" + String(DEVICE_ID) // Nome da conexão BL
+#define MAC_CONTROLLER      "4c:b9:9b:60:58:9d" //Endereço BL do contorle
 
-//********* BLYNK **************
-#define BLYNK_TEMPLATE_ID "TMPL2yI3kdDCD"
-#define BLYNK_TEMPLATE_NAME "Quickstart Template"
-#define BLYNK_AUTH_TOKEN "7Bnx6qLS4MxJx8ukbOCZdjH0fJq3Vevd"
 //********* WIFI **************
 #define SSID "BUSCAPE"
 #define PASS "luaetrovao01"
@@ -18,10 +14,17 @@
 
 #define BUTTON_PIN 23
 
-#define MOTOR_PIN1 5
-#define MOTOR_PIN2 18
-#define MOTOR_PIN3 19
-#define MOTOR_PIN4 21
+#define MOTOR1_PIN1 5
+#define MOTOR1_PIN2 21
+
+#define MOTOR1_PIN3 19
+#define MOTOR1_PIN4 18
+
+#define MOTOR2_PIN1 2
+#define MOTOR2_PIN2 4
+
+#define MOTOR2_PIN3 32
+#define MOTOR2_PIN4 33
 
 
 #define PROCESSOR_COMMUNICATION 1
