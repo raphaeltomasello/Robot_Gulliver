@@ -9,55 +9,75 @@
 //?CONTROLLER
 uint16_t player = 0;
 uint8_t battery_controller = 0;
+uint8_t status_analog = 0;
+uint8_t status_analogR = 0;
+uint8_t status_carangueijo = 0;
+uint8_t status_seta = 0;
+
+//?TIMERs
+unsigned long time_bl = 0;
 
 //******* TASK *****************
 TaskHandle_t hTaskBL;
-TaskHandle_t hTaskLEDStatus;
-
-class DCMotor
-{
-	int spd = 255, pin1, pin2;
-
-public:
-	void Pinout(int in1, int in2)
-	{ // Pinout é o método para a declaração dos pinos que vão controlar o objeto motor
-		pin1 = in1;
-		pin2 = in2;
-		pinMode(pin1, OUTPUT);
-		pinMode(pin2, OUTPUT);
-	}
-	void Speed(int in1)
-	{ // Speed é o método que irá ser responsável por salvar a velocidade de atuação do motor
-		spd = in1;
-	}
-	void Forward()
-	{ // Forward é o método para fazer o motor girar para frente
-		analogWrite(pin1, spd);
-		digitalWrite(pin2, LOW);
-	}
-	void Backward()
-	{ // Backward é o método para fazer o motor girar para trás
-		digitalWrite(pin1, LOW);
-		analogWrite(pin2, spd);
-	}
-	void Stop()
-	{ // Stop é o metodo para fazer o motor ficar parado.
-		digitalWrite(pin1, LOW);
-		digitalWrite(pin2, LOW);
-	}
-};
-DCMotor Motor1, Motor2; // Criação de dois objetos motores, já que usaremos dois motores, e eles já estão prontos para receber os comandos já configurados acima.
 
 //?#############################################*/
 //!------------------- FUNCIONS --------------------------*/
+//?#############################################*/
+void LedRed()
+{
+	digitalWrite(LED_RED, HIGH);
+	digitalWrite(LED_GREEN, LOW);
+	digitalWrite(LED_BLUE, LOW);
+}
+//?#############################################*/
+//!-------------------------------------------------------*/
+//?#############################################*/
+void LedGreen()
+{
+	digitalWrite(LED_RED, LOW);
+	digitalWrite(LED_GREEN, HIGH);
+	digitalWrite(LED_BLUE, LOW);
+}
+//?#############################################*/
+//!-------------------------------------------------------*/
+//?#############################################*/
+void LedBlue()
+{
+	digitalWrite(LED_RED, LOW);
+	digitalWrite(LED_GREEN, LOW);
+	digitalWrite(LED_BLUE, HIGH);
+}
+//?#############################################*/
+//!-------------------------------------------------------*/
+//?#############################################*/
+void LedWhite()
+{
+	digitalWrite(LED_RED, HIGH);
+	digitalWrite(LED_GREEN, HIGH);
+	digitalWrite(LED_BLUE, HIGH);
+}
+//?#############################################*/
+//!-------------------------------------------------------*/
+//?#############################################*/
+void LedOff()
+{
+	digitalWrite(LED_RED, LOW);
+	digitalWrite(LED_GREEN, LOW);
+	digitalWrite(LED_BLUE, LOW);
+}
+//?#############################################*/
+//!-------------------------------------------------------*/
 //?#############################################*/
 void PS5_Controller()
 {
 	if (ps5.isConnected() == true)
 	{
-		if (ps5.Down())
+		LedBlue();
+
+		if (ps5.Down() && !status_analog && !status_carangueijo && !status_analogR)
 		{
-			Serial.println("Down Button");
+			status_seta = 1;
+			// Serial.println("Down Button");
 
 			digitalWrite(MOTOR1_PIN1, LOW);
 			digitalWrite(MOTOR1_PIN2, HIGH);
@@ -72,9 +92,10 @@ void PS5_Controller()
 			digitalWrite(MOTOR2_PIN4, HIGH);
 		}
 
-		if (ps5.Up())
+		else if (ps5.Up() && !status_analog && !status_carangueijo && !status_analogR)
 		{
-			Serial.println("Up Button");
+			status_seta = 1;
+			// Serial.println("Up Button");
 
 			digitalWrite(MOTOR1_PIN1, HIGH);
 			digitalWrite(MOTOR1_PIN2, LOW);
@@ -90,61 +111,11 @@ void PS5_Controller()
 			digitalWrite(MOTOR2_PIN4, LOW);
 		}
 
-		if (ps5.Left())
+		else if (ps5.Left() && !status_analog && !status_carangueijo && !status_analogR)
 		{
-			Serial.println("Left Button");
+			status_seta = 1;
+			// Serial.println("Left Button");
 
-			digitalWrite(MOTOR1_PIN1, LOW);
-			digitalWrite(MOTOR1_PIN2, HIGH);
-
-			digitalWrite(MOTOR2_PIN1, LOW);
-			digitalWrite(MOTOR2_PIN2, HIGH);
-
-			digitalWrite(MOTOR1_PIN3, HIGH);
-			digitalWrite(MOTOR1_PIN4, LOW);
-
-			digitalWrite(MOTOR2_PIN3, HIGH);
-			digitalWrite(MOTOR2_PIN4, LOW);
-		}
-
-		if (ps5.Right())
-		{
-			Serial.println("Right Button");
-
-			digitalWrite(MOTOR1_PIN1, HIGH);
-			digitalWrite(MOTOR1_PIN2, LOW);
-
-			digitalWrite(MOTOR2_PIN1, HIGH);
-			digitalWrite(MOTOR2_PIN2, LOW);
-
-			digitalWrite(MOTOR1_PIN3, LOW);
-			digitalWrite(MOTOR1_PIN4, HIGH);
-
-			digitalWrite(MOTOR2_PIN3, LOW);
-			digitalWrite(MOTOR2_PIN4, HIGH);
-		}
-
-		if (ps5.Square())
-		{
-			Serial.println("Square Button");
-
-			digitalWrite(MOTOR1_PIN1, HIGH);
-			digitalWrite(MOTOR1_PIN2, LOW);
-
-			digitalWrite(MOTOR2_PIN1, LOW);
-			digitalWrite(MOTOR2_PIN2, HIGH);
-
-			//***************************************
-			digitalWrite(MOTOR1_PIN3, LOW);
-			digitalWrite(MOTOR1_PIN4, HIGH);
-
-			digitalWrite(MOTOR2_PIN3, HIGH);
-			digitalWrite(MOTOR2_PIN4, LOW);
-		}
-
-		if (ps5.Circle())
-		{
-			Serial.println("Circle Button");
 			digitalWrite(MOTOR1_PIN1, LOW);
 			digitalWrite(MOTOR1_PIN2, HIGH);
 
@@ -160,66 +131,213 @@ void PS5_Controller()
 			digitalWrite(MOTOR2_PIN4, HIGH);
 		}
 
-		/*
-		if (ps5.Cross())
-					Serial.println("Cross Button");
-		if (ps5.Triangle())
-					Serial.println("Triangle Button");
-				if (ps5.UpRight())
-					Serial.println("Up Right");
-				if (ps5.DownRight())
-					Serial.println("Down Right");
-				if (ps5.UpLeft())
-					Serial.println("Up Left");
-				if (ps5.DownLeft())
-					Serial.println("Down Left");
+		else if (ps5.Right() && !status_analog && !status_carangueijo && !status_analogR)
+		{
+			status_seta = 1;
+			// Serial.println("Right Button");
 
-				if (ps5.L1())
-					Serial.println("L1 Button");
-				if (ps5.R1())
-					Serial.println("R1 Button");
+			digitalWrite(MOTOR1_PIN1, HIGH);
+			digitalWrite(MOTOR1_PIN2, LOW);
 
-				if (ps5.Share())
-					Serial.println("Share Button");
-				if (ps5.Options())
-					Serial.println("Options Button");
-				if (ps5.L3())
-					Serial.println("L3 Button");
-				if (ps5.R3())
-					Serial.println("R3 Button");
+			digitalWrite(MOTOR2_PIN1, LOW);
+			digitalWrite(MOTOR2_PIN2, HIGH);
 
-				if (ps5.PSButton())
-					Serial.println("PS Button");
-				if (ps5.Touchpad())
-					Serial.println("Touch Pad Button");
+			//***************************************
+			digitalWrite(MOTOR1_PIN3, LOW);
+			digitalWrite(MOTOR1_PIN4, HIGH);
 
-				if (ps5.L2())
-				{
-					Serial.printf("L2 button at %d\n", ps5.L2Value());
-				}
-				if (ps5.R2())
-				{
-					Serial.printf("R2 button at %d\n", ps5.R2Value());
-				}
+			digitalWrite(MOTOR2_PIN3, HIGH);
+			digitalWrite(MOTOR2_PIN4, LOW);
+		}
 
-				if (ps5.LStickX())
-				{
-					// Serial.printf("Left Stick x at %d\n", ps5.LStickX());
-				}
-				if (ps5.LStickY())
-				{
-					// Serial.printf("Left Stick y at %d\n", ps5.LStickY());
-				}
-				if (ps5.RStickX())
-				{
-					// Serial.printf("Right Stick x at %d\n", ps5.RStickX());
-				}
-				if (ps5.RStickY())
-				{
-					// Serial.printf("Right Stick y at %d\n", ps5.RStickY());
-				}*/
+		else
+		{
+			status_seta = 0;
+		}
 
-		if (!ps5.Up() && !ps5.Down() && !ps5.Right() && !ps5.Left() && !ps5.Square() && !ps5.Circle())
+		if (ps5.Square() && !status_analog && !status_seta && !status_analogR)
+		{
+			status_carangueijo = 1;
+			// Serial.println("Square Button");
+
+			digitalWrite(MOTOR1_PIN1, LOW);
+			digitalWrite(MOTOR1_PIN2, HIGH);
+
+			digitalWrite(MOTOR2_PIN1, LOW);
+			digitalWrite(MOTOR2_PIN2, HIGH);
+
+			digitalWrite(MOTOR1_PIN3, HIGH);
+			digitalWrite(MOTOR1_PIN4, LOW);
+
+			digitalWrite(MOTOR2_PIN3, HIGH);
+			digitalWrite(MOTOR2_PIN4, LOW);
+		}
+
+		else if (ps5.Circle() && !status_analog && !status_seta && !status_analogR)
+		{
+			status_carangueijo = 1;
+			// Serial.println("Circle Button");
+			digitalWrite(MOTOR1_PIN1, HIGH);
+			digitalWrite(MOTOR1_PIN2, LOW);
+
+			digitalWrite(MOTOR2_PIN1, HIGH);
+			digitalWrite(MOTOR2_PIN2, LOW);
+
+			digitalWrite(MOTOR1_PIN3, LOW);
+			digitalWrite(MOTOR1_PIN4, HIGH);
+
+			digitalWrite(MOTOR2_PIN3, LOW);
+			digitalWrite(MOTOR2_PIN4, HIGH);
+		}
+
+		else
+		{
+			status_carangueijo = 0;
+		}
+
+		if (ps5.LStickX() >= -120 && ps5.LStickY() >= 100 && !status_carangueijo && !status_seta && !status_analogR)
+		{
+			status_analog = 1;
+			//Serial.println("Up Analog");
+			digitalWrite(MOTOR1_PIN1, HIGH);
+			digitalWrite(MOTOR1_PIN2, LOW);
+
+			digitalWrite(MOTOR2_PIN1, HIGH);
+			digitalWrite(MOTOR2_PIN2, LOW);
+
+			//***************************************
+			digitalWrite(MOTOR1_PIN3, HIGH);
+			digitalWrite(MOTOR1_PIN4, LOW);
+
+			digitalWrite(MOTOR2_PIN3, HIGH);
+			digitalWrite(MOTOR2_PIN4, LOW);
+		}
+
+		else if (ps5.LStickX() >= -100 && ps5.LStickY() <= -110 && !status_carangueijo && !status_seta && !status_analogR)
+		{
+			status_analog = 1;
+			//Serial.println("Down Analog");
+
+			digitalWrite(MOTOR1_PIN1, LOW);
+			digitalWrite(MOTOR1_PIN2, HIGH);
+
+			digitalWrite(MOTOR1_PIN3, LOW);
+			digitalWrite(MOTOR1_PIN4, HIGH);
+			//***************************************
+			digitalWrite(MOTOR2_PIN1, LOW);
+			digitalWrite(MOTOR2_PIN2, HIGH);
+
+			digitalWrite(MOTOR2_PIN3, LOW);
+			digitalWrite(MOTOR2_PIN4, HIGH);
+		}
+
+		else if (ps5.LStickX() <= -120 && ps5.LStickY() <= 100 && !status_carangueijo && !status_seta && !status_analogR)
+		{
+			status_analog = 1;
+			//Serial.println("Left Analog");
+
+			digitalWrite(MOTOR1_PIN1, LOW);
+			digitalWrite(MOTOR1_PIN2, HIGH);
+
+			digitalWrite(MOTOR2_PIN1, HIGH);
+			digitalWrite(MOTOR2_PIN2, LOW);
+
+			//***************************************
+
+			digitalWrite(MOTOR1_PIN3, HIGH);
+			digitalWrite(MOTOR1_PIN4, LOW);
+
+			digitalWrite(MOTOR2_PIN3, LOW);
+			digitalWrite(MOTOR2_PIN4, HIGH);
+		}
+
+		else if (ps5.LStickX() >= 112 && ps5.LStickY() >= -122 && !status_carangueijo && !status_seta && !status_analogR)
+		{
+			status_analog = 1;
+			//Serial.println("Right Analog");
+
+			digitalWrite(MOTOR1_PIN1, HIGH);
+			digitalWrite(MOTOR1_PIN2, LOW);
+
+			digitalWrite(MOTOR2_PIN1, LOW);
+			digitalWrite(MOTOR2_PIN2, HIGH);
+
+			//***************************************
+			digitalWrite(MOTOR1_PIN3, LOW);
+			digitalWrite(MOTOR1_PIN4, HIGH);
+
+			digitalWrite(MOTOR2_PIN3, HIGH);
+			digitalWrite(MOTOR2_PIN4, LOW);
+		}
+
+		else
+		{
+			status_analog = 0;
+		}
+
+		if (ps5.RStickX() <= -120 && ps5.RStickY() <= 100 && !status_carangueijo && !status_seta && !status_analog)
+		{
+			status_analogR= 1;
+			//Serial.println("Left Analog");
+
+			digitalWrite(MOTOR1_PIN1, LOW);
+			digitalWrite(MOTOR1_PIN2, HIGH);
+
+			digitalWrite(MOTOR2_PIN1, HIGH);
+			digitalWrite(MOTOR2_PIN2, LOW);
+
+			//***************************************
+
+			digitalWrite(MOTOR1_PIN3, HIGH);
+			digitalWrite(MOTOR1_PIN4, LOW);
+
+			digitalWrite(MOTOR2_PIN3, LOW);
+			digitalWrite(MOTOR2_PIN4, HIGH);
+		}
+
+		else if (ps5.RStickX() >= 112 && ps5.RStickY() >= -122 && !status_carangueijo && !status_seta && !status_analog)
+		{
+			status_analogR = 1;
+			//Serial.println("Right Analog");
+
+			digitalWrite(MOTOR1_PIN1, HIGH);
+			digitalWrite(MOTOR1_PIN2, LOW);
+
+			digitalWrite(MOTOR2_PIN1, LOW);
+			digitalWrite(MOTOR2_PIN2, HIGH);
+
+			//***************************************
+			digitalWrite(MOTOR1_PIN3, LOW);
+			digitalWrite(MOTOR1_PIN4, HIGH);
+
+			digitalWrite(MOTOR2_PIN3, HIGH);
+			digitalWrite(MOTOR2_PIN4, LOW);
+		}
+
+		else
+		{
+			status_analogR = 0;
+		}
+
+		/*if (ps5.LStickX())
+		{
+			//Serial.printf("Left Stick x at %d\n", ps5.LStickX());
+
+		}
+		if (ps5.LStickY())
+		{
+			//Serial.printf("Left Stick y at %d\n", ps5.LStickY());
+		}
+		if (ps5.RStickX())
+		{
+			//Serial.printf("Right Stick x at %d\n", ps5.RStickX());
+		}
+		if (ps5.RStickY())
+		{
+			//Serial.printf("Right Stick y at %d\n", ps5.RStickY());
+		}*/
+
+		if (!ps5.Up() && !ps5.Down() && !ps5.Right() && !ps5.Left() && !ps5.Square() && !ps5.Circle() && !status_analog && !status_analogR)
 		{
 			digitalWrite(MOTOR1_PIN1, LOW);
 			digitalWrite(MOTOR1_PIN2, LOW);
@@ -235,12 +353,18 @@ void PS5_Controller()
 		}
 
 		battery_controller = ps5.Battery();
-		vTaskDelay(1);
+		//vTaskDelay(1);
 	}
 
 	else
 	{
-		Serial.println("The controller is not conected!");
+		if ((millis() - time_bl) > TIMER_BL)
+		{
+			time_bl = millis();
+			Serial.println("The controller is not conected!");
+		}
+
+		LedRed();
 		digitalWrite(MOTOR1_PIN1, LOW);
 		digitalWrite(MOTOR1_PIN2, LOW);
 
@@ -252,6 +376,7 @@ void PS5_Controller()
 
 		digitalWrite(MOTOR2_PIN3, LOW);
 		digitalWrite(MOTOR2_PIN4, LOW);
+
 		// vTaskDelay(5000);
 	}
 }
@@ -263,34 +388,6 @@ void PS5_Controller(void *pvParameters)
 	for (;;)
 	{
 		PS5_Controller();
-	}
-}
-//?#############################################*/
-//!-------------------------------------------------------*/
-//?#############################################*/
-void LEDStatus(void *pvParameters)
-{
-	for (;;)
-	{
-		Serial.print("\nController Battery: ");
-		Serial.println(battery_controller);
-
-		if (battery_controller >= 60)
-		{
-			ps5.setLed(0, 255, 0);
-		}
-
-		else if (battery_controller > 25 && battery_controller < 60)
-		{
-			ps5.setLed(255, 165, 0);
-		}
-
-		else if (battery_controller <= 25)
-		{
-			ps5.setLed(255, 0, 0);
-		}
-
-		vTaskDelay(1000);
 	}
 }
 //?#############################################*/
@@ -309,27 +406,31 @@ void StartPins()
 {
 	pinMode(MOTOR1_PIN1, OUTPUT);
 	pinMode(MOTOR1_PIN2, OUTPUT);
-
-	pinMode(MOTOR1_PIN3, OUTPUT);
-	pinMode(MOTOR1_PIN4, OUTPUT);
-
-	pinMode(MOTOR2_PIN1, OUTPUT);
-	pinMode(MOTOR2_PIN2, OUTPUT);
-
-	pinMode(MOTOR2_PIN3, OUTPUT);
-	pinMode(MOTOR2_PIN4, OUTPUT);
-
 	digitalWrite(MOTOR1_PIN1, LOW);
 	digitalWrite(MOTOR1_PIN2, LOW);
 
+	pinMode(MOTOR1_PIN3, OUTPUT);
+	pinMode(MOTOR1_PIN4, OUTPUT);
 	digitalWrite(MOTOR1_PIN3, LOW);
 	digitalWrite(MOTOR1_PIN4, LOW);
 
+	pinMode(MOTOR2_PIN1, OUTPUT);
+	pinMode(MOTOR2_PIN2, OUTPUT);
 	digitalWrite(MOTOR2_PIN1, LOW);
 	digitalWrite(MOTOR2_PIN2, LOW);
 
+	pinMode(MOTOR2_PIN3, OUTPUT);
+	pinMode(MOTOR2_PIN4, OUTPUT);
 	digitalWrite(MOTOR2_PIN3, LOW);
 	digitalWrite(MOTOR2_PIN4, LOW);
+
+	pinMode(LED_RED, OUTPUT);
+	pinMode(LED_GREEN, OUTPUT);
+	pinMode(LED_BLUE, OUTPUT);
+
+	digitalWrite(LED_RED, LOW);
+	digitalWrite(LED_GREEN, LOW);
+	digitalWrite(LED_BLUE, LOW);
 }
 //?#############################################*/
 //!-------------------------------------------------------*/
@@ -355,7 +456,7 @@ void StartTasks()
 	Serial.print("\n>>> Task PS5_Controller...\tDONE");
 
 	//--- Creating task for WIFI ---
-	xTaskCreatePinnedToCore(
+	/*xTaskCreatePinnedToCore(
 		LEDStatus,		 // Task function.
 		"TaskLED",		 // name of task.
 		5000,			 // Stack size of task
@@ -363,7 +464,7 @@ void StartTasks()
 		2,				 // priority of the task
 		&hTaskLEDStatus, // Task handle to keep track of created task
 		PROCESSOR_MAIN); // pin task to core communication
-	Serial.print("\n>>> Task LEDStatus...\tDONE");
+	Serial.print("\n>>> Task LEDStatus...\tDONE");*/
 }
 //?#############################################*/
 //!-------------------------------------------------------*/

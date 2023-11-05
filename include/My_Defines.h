@@ -10,7 +10,9 @@
 #define SSID "BUSCAPE"
 #define PASS "luaetrovao01"
 //********* PINS **************
-#define PIN_LED 2
+#define LED_RED 14
+#define LED_GREEN 12
+#define LED_BLUE 13
 
 #define BUTTON_PIN 23
 
@@ -30,7 +32,7 @@
 #define PROCESSOR_COMMUNICATION 1
 #define PROCESSOR_MAIN 0
 
-// WIFI
+//********* WIFI **************
 #define WIFI_DISABLE 0       // WiFi disabled (Off)
 #define WIFI_ST_MODE 1       // Entering in WiFi mode as client
 #define WIFI_SERVER_ENABLE 2 // Entering in WiFi mode as server
@@ -39,3 +41,7 @@
 #define WIFI_INIT_ST_MODE 5  // Connecting in the WiFi net
 #define WIFI_INIT_AP_MODE 6  // Entering in WiFi AP mode
 #define WIFI_AP_RUNNING 7    // Running in WiFi mode (On)
+
+//********* TIMERs **************
+
+#define TIMER_BL 1000
